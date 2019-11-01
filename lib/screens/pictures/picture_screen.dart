@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixart/config/main_theme.dart';
 import 'package:pixart/store/pictures/picture.dart';
 import 'package:pixart/widgets/art_widget/pixel_art_widget.dart';
 import 'package:pixart/widgets/picture/picture_footer.dart';
@@ -17,7 +18,7 @@ class PictureScreen extends StatelessWidget {
     final double footerHeight = 100.0;
     final double headerHeight = 50.0;
     return Container(
-      color: Colors.white,
+      color: bgNavColor,
       child: SafeArea(
         // bottom: false,
         child: Scaffold(

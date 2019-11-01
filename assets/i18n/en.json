@@ -1,0 +1,5 @@
+{
+    "auth:user-not-found": "User with that credentials is not exists.",
+    "forgot-password": "Forgot password",
+    "signup": "Sign up"
+}

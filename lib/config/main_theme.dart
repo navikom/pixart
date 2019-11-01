@@ -8,6 +8,8 @@ final Color alienArmpit = Color(0xFF67DD0B);
 final Color slimyGreen = Color(0xFF25A800);
 
 final Color textTitleColor = vividOrangePeel;
+final Color bgNavColor = Color.fromRGBO(93, 142, 155, 1.0);
+final Color bgNavLightColor = Color.fromRGBO(170, 207, 211, 1.0);
 
 ThemeData theme = ThemeData(
   primaryColor: buttonBlue,
@@ -15,17 +17,17 @@ ThemeData theme = ThemeData(
   fontFamily: 'Brandon Grotesque',
   scaffoldBackgroundColor: Color(0xffffffff),
   buttonColor: alienArmpit,
-  dividerColor: vividOrangePeel.withAlpha(100),
+  dividerColor: bgNavColor,
   splashColor: darkCerulean,
   iconTheme: IconThemeData(
-    color: textTitleColor,
-    size: 100.0,
+    color: darkCerulean,
+    size: 36.0,
   ),
   appBarTheme: AppBarTheme(
-    color: Colors.white,
+    color: bgNavColor,
     elevation: 0,
     iconTheme: IconThemeData(
-      color: textTitleColor,
+      color: alienArmpit,
       size: 35,
     ),
     textTheme: TextTheme(

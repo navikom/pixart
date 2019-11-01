@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pixart/config/main_theme.dart';
 import 'package:pixart/screens/pictures/pictures_pages.dart';
-import 'package:pixart/screens/settings_screen.dart';
+import 'package:pixart/screens/settings/settings_screen.dart';
 
 class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: bgNavColor,
       child: SafeArea(
+        bottom: false,
         child: CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
-            activeColor: Theme.of(context).bottomAppBarTheme.color,
+            activeColor: BottomAppBarTheme.of(context).color,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.image),

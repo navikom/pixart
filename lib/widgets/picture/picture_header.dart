@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:pixart/config/main_theme.dart';
 import 'package:pixart/locator.dart';
 import 'package:pixart/service/navigation_service.dart';
 import 'package:pixart/service/non_painted_animation_service.dart';
@@ -55,7 +56,7 @@ class _PictureHeaderState extends State<PictureHeader>
       builder: (_) {
         int historyLength = picture.historyLength;
         PixelsSet pixelsSet = picture.currentPixelsSet;
-        Color circleColor = Theme.of(context).textTheme.title.color;
+        Color circleColor = Theme.of(context).appBarTheme.iconTheme.color;
         Color textColor = Colors.white;
         int circleData = picture.nonePaintedNumber.value;
 
@@ -66,7 +67,7 @@ class _PictureHeaderState extends State<PictureHeader>
         }
         return picture.scale < .25
             ? Container(
-                color: Colors.white,
+                color: bgNavColor,
                 height: widget.height,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,7 +75,7 @@ class _PictureHeaderState extends State<PictureHeader>
                     Align(
                       child: IconButton(
                         splashColor: Colors.transparent,
-                        color: Theme.of(context).textTheme.title.color,
+                        color: Theme.of(context).appBarTheme.iconTheme.color,
                         icon: Icon(Icons.arrow_back_ios),
                         onPressed: () => _navigateBack(),
                       ),

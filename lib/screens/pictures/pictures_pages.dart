@@ -65,69 +65,63 @@ class _PicturesPagesState extends State<PicturesPages> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        bottom: false,
-        child: Scaffold(
-          appBar: AppBar(
-            leading: _currentPage == 0
-                ? IconButton(
-                    splashColor: Color(0x20FFB64D),
-                    iconSize: Theme.of(context).appBarTheme.iconTheme.size,
-                    icon: Icon(Icons.photo_camera),
-                    onPressed: () => _getImage(),
-                  )
-                : Container(),
-            centerTitle: true,
-            title: Container(
-              width: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.fiber_manual_record,
-                      size: _currentPage.floor() == 0 ? 35 : 25),
-                  Icon(Icons.fiber_manual_record,
-                      size: _currentPage.floor() == 1 ? 35 : 25),
-                  Icon(Icons.fiber_manual_record,
-                      size: _currentPage.floor() == 2 ? 35 : 25),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Transform.rotate(
-                angle: pi / 2,
-                child: IconButton(
-                  splashColor: Color(0x20FFB64D),
-                  iconSize: Theme.of(context).appBarTheme.iconTheme.size,
-                  icon: Icon(isList ? Icons.view_module : Icons.view_column),
-                  onPressed: () => _switchListStatus(),
-                ),
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        leading: _currentPage == 0
+            ? IconButton(
+                splashColor: Color(0x20FFB64D),
+                iconSize: IconTheme.of(context).size,
+                icon: Icon(Icons.photo_camera),
+                onPressed: () => _getImage(),
+              )
+            : Container(),
+        centerTitle: true,
+        title: Container(
+          width: 100,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.fiber_manual_record,
+                  size: _currentPage.floor() == 0 ? 35 : 25),
+              Icon(Icons.fiber_manual_record,
+                  size: _currentPage.floor() == 1 ? 35 : 25),
+              Icon(Icons.fiber_manual_record,
+                  size: _currentPage.floor() == 2 ? 35 : 25),
             ],
           ),
-          body: PageView.builder(
-              itemCount: 3,
-              controller: _controller,
-              itemBuilder: (context, position) {
-                if (position == _currentPage) {
-                  return Transform(
-                    alignment: Alignment.center,
-                    transform: _transform(position),
-                    child: _renderScreen(position),
-                  );
-                } else if (position == _currentPage.floor() + 1) {
-                  return Transform(
-                    alignment: Alignment.center,
-                    transform: _transform(position),
-                    child: _renderScreen(position),
-                  );
-                } else {
-                  return _renderScreen(position);
-                }
-              }),
         ),
+        actions: <Widget>[
+          Transform.rotate(
+            angle: pi / 2,
+            child: IconButton(
+              splashColor: Color(0x20FFB64D),
+              iconSize: IconTheme.of(context).size,
+              icon: Icon(isList ? Icons.view_module : Icons.view_column),
+              onPressed: () => _switchListStatus(),
+            ),
+          ),
+        ],
       ),
+      body: PageView.builder(
+          itemCount: 3,
+          controller: _controller,
+          itemBuilder: (context, position) {
+            if (position == _currentPage) {
+              return Transform(
+                alignment: Alignment.center,
+                transform: _transform(position),
+                child: _renderScreen(position),
+              );
+            } else if (position == _currentPage.floor() + 1) {
+              return Transform(
+                alignment: Alignment.center,
+                transform: _transform(position),
+                child: _renderScreen(position),
+              );
+            } else {
+              return _renderScreen(position);
+            }
+          }),
     );
   }
 }
