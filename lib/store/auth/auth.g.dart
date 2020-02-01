@@ -127,7 +127,7 @@ mixin _$Auth on _Auth, Store {
   final _$updateAsyncAction = AsyncAction('update');
 
   @override
-  Future<void> update(LoginResultModel data) {
+  Future<void> update(Map<String, dynamic> data) {
     return _$updateAsyncAction.run(() => super.update(data));
   }
 

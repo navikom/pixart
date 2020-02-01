@@ -22,7 +22,7 @@ mixin _$User on _User, Store {
   }
 
   @override
-  void update(UserModel data) {
+  void update(Map<String, dynamic> data) {
     final _$actionInfo = _$_UserActionController.startAction();
     try {
       return super.update(data);

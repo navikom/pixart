@@ -112,15 +112,15 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   }
 
   @action
-  Future<void> update(LoginResultModel data) async {
+  Future<void> update(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(REFRESH_TOKEN, data.refreshToken);
+    prefs.setString(REFRESH_TOKEN, data['refreshToken']);
     runInAction(() {
-      this.token = data.token;
-      this.expires = data.expires * 1000;
-      this.refreshToken = data.refreshToken;
+      this.token = data['token'];
+      this.expires = data['expires'] * 1000;
+      this.refreshToken = data['refreshToken'];
     });
-    app.setUser(data.user);
+    app.setUser(data['user']);
   }
 
   void setContext(BuildContext ctx) {

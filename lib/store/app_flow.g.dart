@@ -29,7 +29,7 @@ mixin _$AppFlow on _AppFlow, Store {
   final _$_AppFlowActionController = ActionController(name: '_AppFlow');
 
   @override
-  void setUser(UserModel data) {
+  void setUser(Map<String, dynamic> data) {
     final _$actionInfo = _$_AppFlowActionController.startAction();
     try {
       return super.setUser(data);

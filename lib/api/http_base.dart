@@ -12,6 +12,7 @@ abstract class HTTPBase extends BaseClient {
   HTTPBase(this._url);
 
   BaseRequest prepareRequest(String method, String url, [Map body]) {
+    body ??= {};
     Uri uri = Uri.parse('$backendUrl/$_url/$url');
     if (debug) {
       print('REQUEST $method $uri $body ');
@@ -28,8 +29,10 @@ abstract class HTTPBase extends BaseClient {
       request.headers['Authorization'] = token;
     }
     final Client client = Client();
+
     try {
       Response response = await Response.fromStream(await client.send(request));
+      print('fetch 12121212 ${request.headers}');
       if (debug) {
         print('RESPONSE ${request.url} ${response.statusCode}');
       }
@@ -42,9 +45,9 @@ abstract class HTTPBase extends BaseClient {
           jsonResponse['error'] == null ? 'HTTP Error' : jsonResponse['error'],
         );
       }
-      return jsonResponse.data;
+      return jsonResponse['data'];
     } catch (err) {
-      throw err;
+      throw throw ErrorHandler(err);
     } finally {
       client.close();
     }

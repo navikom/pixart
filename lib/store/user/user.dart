@@ -27,20 +27,20 @@ abstract class _User with Store implements UserModel {
   }
 
   @action
-  void update(UserModel data) {
-    this.email = data.email;
-    this.anonymous = data.anonymous;
-    this.phone = data.phone;
-    this.firstName = data.firstName;
-    this.lastName = data.lastName;
-    this.birthday = data.birthday;
-    this.gender = data.gender;
-    this.notificationEmail = data.notificationEmail;
-    this.notificationSms = data.notificationSms;
-    this.subscription = data.subscription;
+  void update(Map<String, dynamic> data) {
+    this.email = data['email'];
+    this.anonymous = data['anonymous'];
+    this.phone = data['phone'];
+    this.firstName = data['firstName'];
+    this.lastName = data['lastName'];
+    this.birthday = data['birthday'];
+    this.gender = data['gender'];
+    this.notificationEmail = data['notificationEmail'];
+    this.notificationSms = data['notificationSms'];
+    this.subscription = data['subscription'];
   }
 }
 
-User userFromData(UserModel data) {
-  return User(data.userId, data.anonymous, data.createdOn);
+User userFromData(Map<String, dynamic> data) {
+  return User(data['userId'], data['anonymous'], data['createdOn']);
 }
