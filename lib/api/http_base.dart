@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:pixart/api/settings.dart';
+import 'package:pixart/service/device_info_service.dart';
 import 'package:pixart/utils/error_handler.dart';
 
 abstract class HTTPBase extends BaseClient {
   final String _url;
   String token;
+  DeviceInfoService device = new DeviceInfoService();
   bool debug = true;
 
   HTTPBase(this._url);
@@ -25,6 +27,7 @@ abstract class HTTPBase extends BaseClient {
     request.headers['Cookie'] = 'APP=Pixart';
     request.headers['Content-Type'] = 'application/json';
     request.headers['Accept'] = 'application/json';
+    request.headers['user-agent'] = json.encode(await this.device.deviceInfo);
     if (token != null) {
       request.headers['Authorization'] = token;
     }

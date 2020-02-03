@@ -43,24 +43,6 @@ mixin _$Auth on _Auth, Store {
     }, _$refreshTokenAtom, name: '${_$refreshTokenAtom.name}_set');
   }
 
-  final _$shouldFirstRefreshAtom = Atom(name: '_Auth.shouldFirstRefresh');
-
-  @override
-  bool get shouldFirstRefresh {
-    _$shouldFirstRefreshAtom.context
-        .enforceReadPolicy(_$shouldFirstRefreshAtom);
-    _$shouldFirstRefreshAtom.reportObserved();
-    return super.shouldFirstRefresh;
-  }
-
-  @override
-  set shouldFirstRefresh(bool value) {
-    _$shouldFirstRefreshAtom.context.conditionallyRunInAction(() {
-      super.shouldFirstRefresh = value;
-      _$shouldFirstRefreshAtom.reportChanged();
-    }, _$shouldFirstRefreshAtom, name: '${_$shouldFirstRefreshAtom.name}_set');
-  }
-
   final _$expiresAtom = Atom(name: '_Auth.expires');
 
   @override
@@ -127,8 +109,9 @@ mixin _$Auth on _Auth, Store {
   final _$updateAsyncAction = AsyncAction('update');
 
   @override
-  Future<void> update(Map<String, dynamic> data) {
-    return _$updateAsyncAction.run(() => super.update(data));
+  Future<void> update(Map<String, dynamic> data,
+      [bool clearAnonymous = false]) {
+    return _$updateAsyncAction.run(() => super.update(data, clearAnonymous));
   }
 
   final _$_AuthActionController = ActionController(name: '_Auth');

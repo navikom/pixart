@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pixart/api/api.dart';
-import 'package:pixart/api/models.dart';
 import 'package:pixart/locator.dart';
 import 'package:pixart/service/localization/localizations.dart';
 import 'package:pixart/store/app_flow.dart';
@@ -18,6 +17,7 @@ class Auth = _Auth with _$Auth;
 
 abstract class _Auth extends Requestable with Store, f.Flow {
   static const String REFRESH_TOKEN = "refresh_token";
+  static const String ANONYMOUS = "anonymous";
 
   final AppFlow app = locator<AppFlow>();
   BuildContext context;
@@ -27,12 +27,9 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   @observable
   String refreshToken;
   @observable
-  bool shouldFirstRefresh = false;
-  @observable
   int expires;
 
   _Auth() {
-    when((_) => shouldFirstRefresh, () => refresh());
     reaction((_) {
       return hasError;
     }, (bool isError) => isError ? showAlert() : null);
@@ -91,7 +88,7 @@ abstract class _Auth extends Requestable with Store, f.Flow {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       await api().user().logout();
-      prefs.remove(REFRESH_TOKEN);
+      prefs.setString(ANONYMOUS, ANONYMOUS);
       app.user.setAnonymous(true);
     } catch (err) {
       print('Logout Error ${err.message}');
@@ -101,24 +98,30 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   @action
   Future<void> checkLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String anonymous = prefs.getString(ANONYMOUS);
     runInAction(() {
       refreshToken = prefs.getString(REFRESH_TOKEN);
-      if (refreshToken != null) {
-        shouldFirstRefresh = true;
-      } else {
-        loginAnonymous();
-      }
     });
+    print('565656565566 $anonymous $refreshToken');
+    if (anonymous != null || refreshToken == null) {
+      await loginAnonymous();
+    } else {
+      await refresh();
+    }
   }
 
   @action
-  Future<void> update(Map<String, dynamic> data) async {
+  Future<void> update(Map<String, dynamic> data,
+      [bool clearAnonymous = false]) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(REFRESH_TOKEN, data['refreshToken']);
+    if (clearAnonymous) {
+      prefs.remove(ANONYMOUS);
+    }
     runInAction(() {
-      this.token = data['token'];
-      this.expires = data['expires'] * 1000;
-      this.refreshToken = data['refreshToken'];
+      token = data['token'];
+      expires = data['expires'] * 1000;
+      refreshToken = data['refreshToken'];
     });
     app.setUser(data['user']);
   }
