@@ -4,7 +4,6 @@ abstract class UserModel {
   final int userId;
   final int createdOn;
   String email;
-  bool anonymous;
   int phone;
   String firstName;
   String lastName;
@@ -14,7 +13,7 @@ abstract class UserModel {
   bool notificationSms;
   bool subscription;
 
-  UserModel(this.userId, this.anonymous, this.createdOn);
+  UserModel(this.userId, this.createdOn);
 }
 
 abstract class PictureModel {

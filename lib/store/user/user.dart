@@ -9,7 +9,6 @@ abstract class _User with Store implements UserModel {
   final int userId;
   String email;
   final int createdOn;
-  bool anonymous;
   int phone;
   DateTime birthday;
   Gender gender;
@@ -19,17 +18,11 @@ abstract class _User with Store implements UserModel {
   String firstName = "";
   String lastName = "";
 
-  _User(this.userId, this.anonymous, this.createdOn);
-
-  @action
-  void setAnonymous(bool value) {
-    anonymous = value;
-  }
+  _User(this.userId, this.createdOn);
 
   @action
   void update(Map<String, dynamic> data) {
     this.email = data['email'];
-    this.anonymous = data['anonymous'];
     this.phone = data['phone'];
     this.firstName = data['firstName'];
     this.lastName = data['lastName'];
@@ -42,5 +35,5 @@ abstract class _User with Store implements UserModel {
 }
 
 User userFromData(Map<String, dynamic> data) {
-  return User(data['userId'], data['anonymous'], data['createdOn']);
+  return User(data['userId'], data['createdOn']);
 }

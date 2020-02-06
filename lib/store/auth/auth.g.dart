@@ -9,21 +9,21 @@ part of 'auth.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$Auth on _Auth, Store {
-  final _$tokenAtom = Atom(name: '_Auth.token');
+  final _$sessionAtom = Atom(name: '_Auth.session');
 
   @override
-  String get token {
-    _$tokenAtom.context.enforceReadPolicy(_$tokenAtom);
-    _$tokenAtom.reportObserved();
-    return super.token;
+  int get session {
+    _$sessionAtom.context.enforceReadPolicy(_$sessionAtom);
+    _$sessionAtom.reportObserved();
+    return super.session;
   }
 
   @override
-  set token(String value) {
-    _$tokenAtom.context.conditionallyRunInAction(() {
-      super.token = value;
-      _$tokenAtom.reportChanged();
-    }, _$tokenAtom, name: '${_$tokenAtom.name}_set');
+  set session(int value) {
+    _$sessionAtom.context.conditionallyRunInAction(() {
+      super.session = value;
+      _$sessionAtom.reportChanged();
+    }, _$sessionAtom, name: '${_$sessionAtom.name}_set');
   }
 
   final _$refreshTokenAtom = Atom(name: '_Auth.refreshToken');
@@ -58,6 +58,23 @@ mixin _$Auth on _Auth, Store {
       super.expires = value;
       _$expiresAtom.reportChanged();
     }, _$expiresAtom, name: '${_$expiresAtom.name}_set');
+  }
+
+  final _$anonymousAtom = Atom(name: '_Auth.anonymous');
+
+  @override
+  bool get anonymous {
+    _$anonymousAtom.context.enforceReadPolicy(_$anonymousAtom);
+    _$anonymousAtom.reportObserved();
+    return super.anonymous;
+  }
+
+  @override
+  set anonymous(bool value) {
+    _$anonymousAtom.context.conditionallyRunInAction(() {
+      super.anonymous = value;
+      _$anonymousAtom.reportChanged();
+    }, _$anonymousAtom, name: '${_$anonymousAtom.name}_set');
   }
 
   final _$refreshAsyncAction = AsyncAction('refresh');
@@ -109,9 +126,8 @@ mixin _$Auth on _Auth, Store {
   final _$updateAsyncAction = AsyncAction('update');
 
   @override
-  Future<void> update(Map<String, dynamic> data,
-      [bool clearAnonymous = false]) {
-    return _$updateAsyncAction.run(() => super.update(data, clearAnonymous));
+  Future<void> update(Map<String, dynamic> data) {
+    return _$updateAsyncAction.run(() => super.update(data));
   }
 
   final _$_AuthActionController = ActionController(name: '_Auth');

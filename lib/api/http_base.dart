@@ -7,11 +7,11 @@ import 'package:pixart/utils/error_handler.dart';
 
 abstract class HTTPBase extends BaseClient {
   final String _url;
-  String token;
+  final int session;
   DeviceInfoService device = new DeviceInfoService();
   bool debug = true;
 
-  HTTPBase(this._url);
+  HTTPBase(this._url, this.session);
 
   BaseRequest prepareRequest(String method, String url, [Map body]) {
     body ??= {};
@@ -28,8 +28,9 @@ abstract class HTTPBase extends BaseClient {
     request.headers['Content-Type'] = 'application/json';
     request.headers['Accept'] = 'application/json';
     request.headers['user-agent'] = json.encode(await this.device.deviceInfo);
-    if (token != null) {
-      request.headers['Authorization'] = token;
+    if (session != null) {
+      request.headers['Cookie'] =
+          '${request.headers['Cookie']};SESSION=$session';
     }
     final Client client = Client();
 
@@ -37,9 +38,16 @@ abstract class HTTPBase extends BaseClient {
       Response response = await Response.fromStream(await client.send(request));
       print('fetch 12121212 ${request.headers}');
       if (debug) {
-        print('RESPONSE ${request.url} ${response.statusCode}');
+        print(
+            'RESPONSE ${request.url} ${response.statusCode} ${response.body}');
       }
-      dynamic jsonResponse = json.decode(response.body);
+      dynamic jsonResponse;
+      try {
+        jsonResponse = json.decode(response.body);
+      } catch (e) {
+        jsonResponse = {'error': response.body};
+      }
+
       if (debug) {
         print('RESPONSE BODY ${request.url} $jsonResponse');
       }
@@ -49,8 +57,8 @@ abstract class HTTPBase extends BaseClient {
         );
       }
       return jsonResponse['data'];
-    } catch (err) {
-      throw throw ErrorHandler(err);
+    } on Exception catch (err) {
+      throw err;
     } finally {
       client.close();
     }

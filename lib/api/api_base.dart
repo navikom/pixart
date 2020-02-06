@@ -2,21 +2,21 @@ import 'package:http/http.dart';
 import 'package:pixart/api/http_base.dart';
 
 class ApiBase {
-  String token;
+  int session;
 
-  ApiBase(this.token);
+  ApiBase(this.session);
 
   UsersMethods user() {
-    return UsersMethods();
+    return UsersMethods(this.session);
   }
 }
 
 class UsersMethods extends HTTPBase {
-  UsersMethods() : super('users');
+  UsersMethods(session) : super('users', session);
 
   signup(String email, String password) {
     Map body = Map.of(
-      {email: email, password: password, 'grantType': 'password'},
+      {'email': email, 'password': password, 'grantType': 'password'},
     );
     return fetch('post', 'sign-up', body);
   }
@@ -31,9 +31,8 @@ class UsersMethods extends HTTPBase {
     return fetch('post', 'anonymous');
   }
 
-  refresh(String refreshToken) {
-    Map body = Map.fromIterables(
-        ['token', 'grantType'], [refreshToken, 'refresh_token']);
+  refresh() {
+    Map body = Map.fromIterables(['grantType'], ['refresh']);
     return fetch('post', 'login', body);
   }
 

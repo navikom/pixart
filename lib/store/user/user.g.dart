@@ -12,16 +12,6 @@ mixin _$User on _User, Store {
   final _$_UserActionController = ActionController(name: '_User');
 
   @override
-  void setAnonymous(bool value) {
-    final _$actionInfo = _$_UserActionController.startAction();
-    try {
-      return super.setAnonymous(value);
-    } finally {
-      _$_UserActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void update(Map<String, dynamic> data) {
     final _$actionInfo = _$_UserActionController.startAction();
     try {

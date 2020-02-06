@@ -3,21 +3,23 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixart/config/main_theme.dart';
 import 'package:pixart/locator.dart';
 import 'package:pixart/service/navigation_service.dart';
-import 'package:pixart/store/app_flow.dart';
 import 'package:pixart/constants/routes_path.dart' as constants;
+import 'package:pixart/store/auth/auth.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final AppFlow _store = locator<AppFlow>();
+  final Auth _auth = locator<Auth>();
   final NavigationService _navigationService = locator<NavigationService>();
 
   Widget _user(BuildContext context) {
     return Observer(
       builder: (_) => ListTile(
           leading: Icon(Icons.person, color: IconTheme.of(context).color),
-          title: Text(_store.user.anonymous ? "Login" : "Account"),
+          title: Text(_auth.anonymous ? "Login" : "Logout"),
           trailing: Icon(Icons.arrow_right, color: IconTheme.of(context).color),
           onTap: () {
-            _navigationService.navigateTo(constants.LOGIN_ROUTE);
+            _auth.anonymous
+                ? _navigationService.navigateTo(constants.LOGIN_ROUTE)
+                : _auth.logout();
           }),
     );
   }

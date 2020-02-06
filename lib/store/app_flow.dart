@@ -1,7 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:pixart/api/models.dart';
 import 'package:pixart/locator.dart';
-import 'package:pixart/store/auth/auth.dart';
 import 'package:pixart/store/flow.dart';
 import 'package:pixart/store/pictures/pictures.dart';
 import 'package:pixart/store/user/user.dart';
@@ -12,7 +10,7 @@ class AppFlow = _AppFlow with _$AppFlow;
 
 abstract class _AppFlow extends Flow with Store {
   final Pictures pictures = locator<Pictures>();
-  // final Auth auth = locator<Auth>();
+
   @observable
   User user;
 
@@ -27,7 +25,6 @@ abstract class _AppFlow extends Flow with Store {
 
   @override
   void start() {
-    // auth.start();
     pictures.fetchItems();
   }
 

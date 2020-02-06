@@ -5,29 +5,34 @@ import 'package:mobx/mobx.dart';
 import 'package:pixart/api/api.dart';
 import 'package:pixart/locator.dart';
 import 'package:pixart/service/localization/localizations.dart';
+import 'package:pixart/service/navigation_service.dart';
 import 'package:pixart/store/app_flow.dart';
 import 'package:pixart/store/flow.dart' as f;
 import 'package:pixart/store/requestable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pixart/widgets/dialog.dart' as dialog;
+import 'package:pixart/constants/routes_path.dart' as constants;
 
 part 'auth.g.dart';
 
 class Auth = _Auth with _$Auth;
 
 abstract class _Auth extends Requestable with Store, f.Flow {
-  static const String REFRESH_TOKEN = "refresh_token";
+  static const String SESSION = "session";
   static const String ANONYMOUS = "anonymous";
 
   final AppFlow app = locator<AppFlow>();
+  final NavigationService _navigationService = locator<NavigationService>();
   BuildContext context;
 
   @observable
-  String token;
+  int session;
   @observable
   String refreshToken;
   @observable
   int expires;
+  @observable
+  bool anonymous = true;
 
   _Auth() {
     reaction((_) {
@@ -39,14 +44,12 @@ abstract class _Auth extends Requestable with Store, f.Flow {
 
   @action
   Future<void> refresh() async {
-    if (refreshToken == null) {
-      return;
-    }
     try {
-      this.update(await nonAuthorizedApi().user().refresh(refreshToken));
-    } catch (err) {
-      print('Refresh Error ${err.message}');
-      this.logout();
+      this.update(await api().user().refresh());
+    } on Exception catch (err) {
+      print('Refresh ${err.toString()}');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove(SESSION);
     }
   }
 
@@ -56,6 +59,9 @@ abstract class _Auth extends Requestable with Store, f.Flow {
     try {
       update(await api().user().signup(email, password));
       successCb();
+      Timer(Duration(seconds: 1), () {
+        _navigationService.navigateReplace(constants.SETTINGS_ROUTE);
+      });
     } catch (err) {
       setError(err.message);
       Timer(Duration(seconds: 2), failureCb);
@@ -68,6 +74,9 @@ abstract class _Auth extends Requestable with Store, f.Flow {
     try {
       update(await api().user().login(email, password));
       successCb();
+      Timer(Duration(seconds: 1), () {
+        _navigationService.navigateReplace(constants.SETTINGS_ROUTE);
+      });
     } catch (err) {
       setError(err.message);
       Timer(Duration(seconds: 2), failureCb);
@@ -77,33 +86,32 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   @action
   Future<void> loginAnonymous() async {
     try {
-      update(await nonAuthorizedApi().user().anonymous());
-    } catch (err) {
-      print('Anonymous Error ${err.message}');
+      update(await api().user().anonymous());
+    } on Exception catch (err) {
+      print('Anonymous ${err.toString()}');
     }
   }
 
   @action
   Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       await api().user().logout();
-      prefs.setString(ANONYMOUS, ANONYMOUS);
-      app.user.setAnonymous(true);
-    } catch (err) {
-      print('Logout Error ${err.message}');
+      runInAction(() {
+        anonymous = true;
+      });
+    } on Exception catch (err) {
+      print('Logout ${err.toString()}');
     }
   }
 
   @action
   Future<void> checkLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String anonymous = prefs.getString(ANONYMOUS);
     runInAction(() {
-      refreshToken = prefs.getString(REFRESH_TOKEN);
+      session = prefs.getInt(SESSION);
     });
-    print('565656565566 $anonymous $refreshToken');
-    if (anonymous != null || refreshToken == null) {
+    print('565656565566 $anonymous $session');
+    if (session == null) {
       await loginAnonymous();
     } else {
       await refresh();
@@ -111,17 +119,14 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   }
 
   @action
-  Future<void> update(Map<String, dynamic> data,
-      [bool clearAnonymous = false]) async {
+  Future<void> update(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(REFRESH_TOKEN, data['refreshToken']);
-    if (clearAnonymous) {
-      prefs.remove(ANONYMOUS);
-    }
+    prefs.setInt(SESSION, data['session']);
+
     runInAction(() {
-      token = data['token'];
+      session = data['session'];
       expires = data['expires'] * 1000;
-      refreshToken = data['refreshToken'];
+      anonymous = data['anonymous'];
     });
     app.setUser(data['user']);
   }

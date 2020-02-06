@@ -5,7 +5,6 @@ import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:pixart/config/main_theme.dart';
 import 'package:pixart/controllers/teddy_controller.dart';
 import 'package:pixart/locator.dart';
-import 'package:pixart/service/localization/localizations.dart';
 import 'package:pixart/store/auth/auth.dart';
 import 'package:pixart/store/auth/auth_validation.dart';
 import 'package:pixart/widgets/button/gradient_button.dart';
