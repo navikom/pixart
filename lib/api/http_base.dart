@@ -3,15 +3,18 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:pixart/api/settings.dart';
 import 'package:pixart/service/device_info_service.dart';
+import 'package:pixart/store/auth/auth.dart';
 import 'package:pixart/utils/error_handler.dart';
+
+import '../locator.dart';
 
 abstract class HTTPBase extends BaseClient {
   final String _url;
-  final int session;
   DeviceInfoService device = new DeviceInfoService();
+  final Auth auth = locator<Auth>();
   bool debug = true;
 
-  HTTPBase(this._url, this.session);
+  HTTPBase(this._url);
 
   BaseRequest prepareRequest(String method, String url, [Map body]) {
     body ??= {};
@@ -24,19 +27,22 @@ abstract class HTTPBase extends BaseClient {
 
   Future<dynamic> fetch(String method, String url, [Map body]) async {
     BaseRequest request = prepareRequest(method, url, body);
+
     request.headers['Cookie'] = 'APP=Pixart';
+
+    if (auth.connectSid != null) {
+      request.headers['Cookie'] =
+          '${request.headers['Cookie']};connect.sid=${auth.connectSid}';
+    }
     request.headers['Content-Type'] = 'application/json';
     request.headers['Accept'] = 'application/json';
     request.headers['user-agent'] = json.encode(await this.device.deviceInfo);
-    if (session != null) {
-      request.headers['Cookie'] =
-          '${request.headers['Cookie']};SESSION=$session';
-    }
     final Client client = Client();
 
     try {
       Response response = await Response.fromStream(await client.send(request));
       print('fetch 12121212 ${request.headers}');
+      auth.setFromCookie(response.headers['set-cookie']);
       if (debug) {
         print(
             'RESPONSE ${request.url} ${response.statusCode} ${response.body}');

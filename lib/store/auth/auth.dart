@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -18,21 +19,18 @@ part 'auth.g.dart';
 class Auth = _Auth with _$Auth;
 
 abstract class _Auth extends Requestable with Store, f.Flow {
-  static const String SESSION = "session";
-  static const String ANONYMOUS = "anonymous";
+  static const String CONNECT_SID = "connectSid";
 
   final AppFlow app = locator<AppFlow>();
   final NavigationService _navigationService = locator<NavigationService>();
   BuildContext context;
 
   @observable
-  int session;
-  @observable
-  String refreshToken;
-  @observable
-  int expires;
-  @observable
   bool anonymous = true;
+  @observable
+  String sid;
+  @observable
+  String connectSid;
 
   _Auth() {
     reaction((_) {
@@ -40,16 +38,12 @@ abstract class _Auth extends Requestable with Store, f.Flow {
     }, (bool isError) => isError ? showAlert() : null);
   }
 
-  bool get isExpired => DateTime.now().millisecond > expires;
-
   @action
   Future<void> refresh() async {
     try {
       this.update(await api().user().refresh());
     } on Exception catch (err) {
       print('Refresh ${err.toString()}');
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove(SESSION);
     }
   }
 
@@ -108,10 +102,10 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   Future<void> checkLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     runInAction(() {
-      session = prefs.getInt(SESSION);
+      connectSid = prefs.getString(CONNECT_SID);
     });
-    print('565656565566 $anonymous $session');
-    if (session == null) {
+    print('565656565566 $anonymous $connectSid');
+    if (connectSid == null) {
       await loginAnonymous();
     } else {
       await refresh();
@@ -119,16 +113,23 @@ abstract class _Auth extends Requestable with Store, f.Flow {
   }
 
   @action
-  Future<void> update(Map<String, dynamic> data) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(SESSION, data['session']);
+  void update(Map<String, dynamic> data) {
+    anonymous = data['anonymous'];
 
-    runInAction(() {
-      session = data['session'];
-      expires = data['expires'] * 1000;
-      anonymous = data['anonymous'];
-    });
     app.setUser(data['user']);
+  }
+
+  @action
+  Future<void> setFromCookie(String cookie) async {
+    List<String> lines = cookie.split(',');
+    String newSid = Cookie.fromSetCookieValue(lines[0]).value;
+    String connect = Cookie.fromSetCookieValue(lines[1]).value;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(CONNECT_SID, connect);
+    runInAction(() {
+      sid = newSid;
+      connectSid = connect;
+    });
   }
 
   void setContext(BuildContext ctx) {

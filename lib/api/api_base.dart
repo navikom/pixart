@@ -2,17 +2,15 @@ import 'package:http/http.dart';
 import 'package:pixart/api/http_base.dart';
 
 class ApiBase {
-  int session;
-
-  ApiBase(this.session);
+  ApiBase();
 
   UsersMethods user() {
-    return UsersMethods(this.session);
+    return UsersMethods();
   }
 }
 
 class UsersMethods extends HTTPBase {
-  UsersMethods(session) : super('users', session);
+  UsersMethods() : super('users');
 
   signup(String email, String password) {
     Map body = Map.of(

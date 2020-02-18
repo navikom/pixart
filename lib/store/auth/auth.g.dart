@@ -9,57 +9,6 @@ part of 'auth.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$Auth on _Auth, Store {
-  final _$sessionAtom = Atom(name: '_Auth.session');
-
-  @override
-  int get session {
-    _$sessionAtom.context.enforceReadPolicy(_$sessionAtom);
-    _$sessionAtom.reportObserved();
-    return super.session;
-  }
-
-  @override
-  set session(int value) {
-    _$sessionAtom.context.conditionallyRunInAction(() {
-      super.session = value;
-      _$sessionAtom.reportChanged();
-    }, _$sessionAtom, name: '${_$sessionAtom.name}_set');
-  }
-
-  final _$refreshTokenAtom = Atom(name: '_Auth.refreshToken');
-
-  @override
-  String get refreshToken {
-    _$refreshTokenAtom.context.enforceReadPolicy(_$refreshTokenAtom);
-    _$refreshTokenAtom.reportObserved();
-    return super.refreshToken;
-  }
-
-  @override
-  set refreshToken(String value) {
-    _$refreshTokenAtom.context.conditionallyRunInAction(() {
-      super.refreshToken = value;
-      _$refreshTokenAtom.reportChanged();
-    }, _$refreshTokenAtom, name: '${_$refreshTokenAtom.name}_set');
-  }
-
-  final _$expiresAtom = Atom(name: '_Auth.expires');
-
-  @override
-  int get expires {
-    _$expiresAtom.context.enforceReadPolicy(_$expiresAtom);
-    _$expiresAtom.reportObserved();
-    return super.expires;
-  }
-
-  @override
-  set expires(int value) {
-    _$expiresAtom.context.conditionallyRunInAction(() {
-      super.expires = value;
-      _$expiresAtom.reportChanged();
-    }, _$expiresAtom, name: '${_$expiresAtom.name}_set');
-  }
-
   final _$anonymousAtom = Atom(name: '_Auth.anonymous');
 
   @override
@@ -75,6 +24,40 @@ mixin _$Auth on _Auth, Store {
       super.anonymous = value;
       _$anonymousAtom.reportChanged();
     }, _$anonymousAtom, name: '${_$anonymousAtom.name}_set');
+  }
+
+  final _$sidAtom = Atom(name: '_Auth.sid');
+
+  @override
+  String get sid {
+    _$sidAtom.context.enforceReadPolicy(_$sidAtom);
+    _$sidAtom.reportObserved();
+    return super.sid;
+  }
+
+  @override
+  set sid(String value) {
+    _$sidAtom.context.conditionallyRunInAction(() {
+      super.sid = value;
+      _$sidAtom.reportChanged();
+    }, _$sidAtom, name: '${_$sidAtom.name}_set');
+  }
+
+  final _$connectSidAtom = Atom(name: '_Auth.connectSid');
+
+  @override
+  String get connectSid {
+    _$connectSidAtom.context.enforceReadPolicy(_$connectSidAtom);
+    _$connectSidAtom.reportObserved();
+    return super.connectSid;
+  }
+
+  @override
+  set connectSid(String value) {
+    _$connectSidAtom.context.conditionallyRunInAction(() {
+      super.connectSid = value;
+      _$connectSidAtom.reportChanged();
+    }, _$connectSidAtom, name: '${_$connectSidAtom.name}_set');
   }
 
   final _$refreshAsyncAction = AsyncAction('refresh');
@@ -123,14 +106,24 @@ mixin _$Auth on _Auth, Store {
     return _$checkLocalStorageAsyncAction.run(() => super.checkLocalStorage());
   }
 
-  final _$updateAsyncAction = AsyncAction('update');
+  final _$setFromCookieAsyncAction = AsyncAction('setFromCookie');
 
   @override
-  Future<void> update(Map<String, dynamic> data) {
-    return _$updateAsyncAction.run(() => super.update(data));
+  Future<void> setFromCookie(String cookie) {
+    return _$setFromCookieAsyncAction.run(() => super.setFromCookie(cookie));
   }
 
   final _$_AuthActionController = ActionController(name: '_Auth');
+
+  @override
+  void update(Map<String, dynamic> data) {
+    final _$actionInfo = _$_AuthActionController.startAction();
+    try {
+      return super.update(data);
+    } finally {
+      _$_AuthActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void start() {
